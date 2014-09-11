@@ -68,6 +68,7 @@ static void addForce(body *a, body *b)
   else if (distance_x > 0)
     {
       a->force_x += force_x;
+
       b->force_x += 0 - force_x;
     }
 

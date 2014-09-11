@@ -17,7 +17,14 @@
 
 static prec gdt = 0.0001;
 
-typedef struct {
+typedef struct body {
+  int position_x;
+  int position_y;
+  int mass;
+  int velocity_x;
+  int velocity_y;
+  int acceleration_x;
+  int acceleration_y;
 } body;
 
 
@@ -26,10 +33,23 @@ static void update(body* a, prec dt)
 }
 
 
-static void resetForce(body* b) {} 
+static void resetForce(body* b) {
+
+} 
+
+static float distance(body a, body b) {
+  // int test = a.position_x;
+  int x = (a.position_x - b.position_x) * (a.position_x - b.position_x);
+  int y = (a.position_y - b.position_y) * (a.position_y - b.position_y);
+
+  float distance = sqrt (x+y);
+
+  return distance;
+}
 
 static void addForce(body* a, body* b)
 {
+  
 }
 
 static prec newRand() 
@@ -58,10 +78,17 @@ static void copyToXBuffer(body* star, XPoint* points, int N)
 #endif
 
 int main(int argc, char* argv[]) {
+  
+  struct body a = {2, 2, 0, 0, 0, 0, 0};
+  struct body b = {1, 1, 0, 0, 0, 0, 0};
 
   int N = 200;
   int iter = 1000;
-
+  if(argc == 1) {
+    float dist = distance (a, b);
+    printf("Test distance: %f\n", dist);
+  }
+  
   if(argc == 3)
     {
       N = atoi(argv[1]);

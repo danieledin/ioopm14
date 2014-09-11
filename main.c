@@ -39,6 +39,7 @@ static void resetForce(body* b) {
 
 static float distance(body a, body b) {
   // int test = a.position_x;
+  // test
   int x = (a.position_x - b.position_x) * (a.position_x - b.position_x);
   int y = (a.position_y - b.position_y) * (a.position_y - b.position_y);
 

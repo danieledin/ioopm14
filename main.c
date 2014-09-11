@@ -21,26 +21,28 @@ typedef struct body {
   int position_x;
   int position_y;
   int mass;
-  int velocity_x;
-  int velocity_y;
-  int acceleration_x;
-  int acceleration_y;
+  float velocity_x;
+  float velocity_y;
+  float acceleration_x;
+  float acceleration_y;
+  float force_x;
+  float force_y;
 } body;
 
 
 static void update(body* a, prec dt)
 {
+
 }
 
 
 static void resetForce(body* b) {
 
-} 
+}
+
+ 
 
 static float distance(body a, body b) {
-  // int test = a.position_x;
-  // test 
-  // test igen
   int x = (a.position_x - b.position_x) * (a.position_x - b.position_x);
   int y = (a.position_y - b.position_y) * (a.position_y - b.position_y);
 
@@ -49,9 +51,37 @@ static float distance(body a, body b) {
   return distance;
 }
 
-static void addForce(body* a, body* b)
+static void addForce(body *a, body *b)
 {
-  
+
+  float g = 9.82;
+  float distance_x = (a->position_x - b->position_x);
+  float force_x = ((a->mass * b->mass) / distance_x) * g;
+  float distance_y = (a->position_y - b->position_y);
+  float force_y = ((a->mass * b->mass) / distance_y) * g;
+
+  if (distance_x < 0)
+    {
+      a->force_x += 0 - force_x;
+      b->force_x += force_x;
+    }
+  else if (distance_x > 0)
+    {
+      a->force_x += force_x;
+      b->force_x += 0 - force_x;
+    }
+
+  if (distance_y < 0)
+    {
+      a->force_y += 0 - force_y;
+      b->force_y += force_y;
+    }
+  else if (distance_y > 0)
+    {
+      a->force_y += force_y;
+      b->force_y += 0 - force_y;
+    }
+ 
 }
 
 static prec newRand() 
@@ -81,14 +111,14 @@ static void copyToXBuffer(body* star, XPoint* points, int N)
 
 int main(int argc, char* argv[]) {
   
-  struct body a = {2, 2, 0, 0, 0, 0, 0};
-  struct body b = {1, 1, 0, 0, 0, 0, 0};
+  struct body a = {1, 1, 1, 0, 0, 0, 0, 0, 0};
+  struct body b = {3, 3, 1, 0, 0, 0, 0, 0, 0};
 
   int N = 200;
   int iter = 1000;
   if(argc == 1) {
-    float dist = distance (a, b);
-    printf("Test distance: %f\n", dist);
+    addForce(&a, &b);
+    printf("Test force: %f\n", a.force_y);
   }
   
   if(argc == 3)

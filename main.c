@@ -34,6 +34,31 @@ typedef struct body {
 // foo[5].position_x = 42;
 // memset(foo, 0, 10*sizeof(struct body))
 
+
+static struct body *createBodiesRec (int N, int x, struct body* stars)
+{
+
+  if (N != 0)
+    {
+      time_t t;
+      srand((unsigned) time(&t));
+      
+      stars[N].position_x = rand() % 10;
+      stars[N].position_y = rand() % 10;
+      stars[N].mass = rand() % 100 + 100;
+      createBodiesRec (N-1, 0, stars);
+    }
+
+  else
+    {
+      return stars;
+    }
+
+
+
+}
+
+
 static struct body *createBodies (int N)
 {
   time_t t;
@@ -135,14 +160,21 @@ static void copyToXBuffer(body* star, XPoint* points, int N)
 
 int main(int argc, char* argv[]) {
 
-  struct body* stars = createBodies(2);
-   
+
+  /*
+  struct body *stars = malloc (100000* sizeof(struct body ));
+  memset(stars, 0, 100000*sizeof(struct body));   
+  
+  stars = createBodiesRec(100000, 1, stars);
+  */
+
+  struct body *stars = createBodies(100000);
 
   int N = 200;
   int iter = 1000;
   if(argc == 1) {
     //    addForce(&a, &b);
-    printf("Test y position: %d\n", stars[0].position_y);
+    printf("Test y position: %d\n", stars[5].position_y);
 
     //    printf("Test array: %f\n", starList[0]->.force_x);
   }

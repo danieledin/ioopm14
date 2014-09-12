@@ -65,6 +65,7 @@ static struct body *createBodies (int N)
   srand((unsigned) time(&t));
 
   int i;
+  // kolla ifall NULL!!
   struct  body *stars = malloc (N* sizeof(struct body ));
   memset(stars, 0, N*sizeof(struct body));
   for (i = 0; i < N; i++)

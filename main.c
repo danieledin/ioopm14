@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <string.h>
 
 #ifdef ANIMATE
 #include <X11/Xlib.h>
@@ -29,6 +30,28 @@ typedef struct body {
   float force_y;
 } body;
 
+// struct  body *foo = malloc (10* sizeof(struct body ));
+// foo[5].position_x = 42;
+// memset(foo, 0, 10*sizeof(struct body))
+
+static struct body *createBodies (int N)
+{
+  time_t t;
+  srand((unsigned) time(&t));
+
+  int i;
+  struct  body *stars = malloc (N* sizeof(struct body ));
+  memset(stars, 0, N*sizeof(struct body));
+  for (i = 0; i < N; i++)
+    {
+      stars[i].position_x = rand() % 10;
+      stars[i].position_y = rand() % 10;
+      stars[i].mass = rand() % 100 + 100;
+    }
+
+  return stars;
+
+}
 
 static void update(body* a, prec dt)
 {
@@ -111,15 +134,17 @@ static void copyToXBuffer(body* star, XPoint* points, int N)
 #endif
 
 int main(int argc, char* argv[]) {
-  
-  struct body a = {1, 1, 1, 0, 0, 0, 0, 0, 0};
-  struct body b = {3, 3, 1, 0, 0, 0, 0, 0, 0};
+
+  struct body* stars = createBodies(2);
+   
 
   int N = 200;
   int iter = 1000;
   if(argc == 1) {
-    addForce(&a, &b);
-    printf("Test force: %f\n", a.force_y);
+    //    addForce(&a, &b);
+    printf("Test y position: %d\n", stars[0].position_y);
+
+    //    printf("Test array: %f\n", starList[0]->.force_x);
   }
   
   if(argc == 3)

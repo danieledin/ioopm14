@@ -16,12 +16,15 @@
 #define PI 3.14159265359
 
 
+//G expressed in tons of kilos
+static float G = 0.0000000667384;
+
 static prec gdt = 0.0001;
 
 typedef struct body {
   int position_x;
   int position_y;
-  int mass;
+  float  mass;
   float velocity_x;
   float velocity_y;
   float acceleration_x;
@@ -30,34 +33,27 @@ typedef struct body {
   float force_y;
 } body;
 
-// struct  body *foo = malloc (10* sizeof(struct body ));
-// foo[5].position_x = 42;
-// memset(foo, 0, 10*sizeof(struct body))
 
 
-static struct body *createBodiesRec (int N, int x, struct body* stars)
+static void setVelocity (struct body *star)
 {
-
-  if (N != 0)
-    {
-      time_t t;
-      srand((unsigned) time(&t));
-      
-      stars[N].position_x = rand() % 10;
-      stars[N].position_y = rand() % 10;
-      stars[N].mass = rand() % 100 + 100;
-      createBodiesRec (N-1, 0, stars);
-    }
-
-  else
-    {
-      return stars;
-    }
-
-
+  star->velocity_x = (star->velocity_x) + (star->acceleration_x) * gdt;
+  star->velocity_y = (star->velocity_y) + (star->acceleration_y) * gdt;
 
 }
 
+static void setAcceleration (struct body *star)
+{
+  star->acceleration_x += (star->force_x) / (star->mass);
+  star->acceleration_y += (star->force_y) / (star->mass);
+}
+
+static void setPosition (struct body *star)
+{
+  star->position_x = (star->position_x) + ((star->velocity_x) * gdt) + (((star->acceleration_x) * gdt * gdt) / 2);
+  star->position_y = (star->position_y) + ((star->velocity_y) * gdt) + (((star->acceleration_y) * gdt * gdt) / 2);
+
+} 
 
 static struct body *createBodies (int N)
 {
@@ -71,7 +67,7 @@ static struct body *createBodies (int N)
     {
       stars[i].position_x = rand() % 10;
       stars[i].position_y = rand() % 10;
-      stars[i].mass = rand() % 100 + 100;
+      stars[i].mass = rand() % 1000000000 + 1000000000;
     }
 
   return stars;
@@ -102,11 +98,11 @@ static float distance(body a, body b) {
 static void addForce(body *a, body *b)
 {
 
-  float g = 9.82;
+  
   float distance_x = (a->position_x - b->position_x);
-  float force_x = ((a->mass * b->mass) / distance_x) * g;
+  float force_x = ((a->mass * b->mass) / distance_x) * G;
   float distance_y = (a->position_y - b->position_y);
-  float force_y = ((a->mass * b->mass) / distance_y) * g;
+  float force_y = ((a->mass * b->mass) / distance_y) * G;
 
   if (distance_x < 0)
     {
@@ -145,8 +141,11 @@ void init(int N, body* star)
 
 }
 
+
 static void updateForces(int N, body* star)
 {
+  addForce(&star, &star[1]);
+
 }
 
 // Manually copy coordinates from stars into points (to be drawn).
@@ -161,20 +160,11 @@ static void copyToXBuffer(body* star, XPoint* points, int N)
 int main(int argc, char* argv[]) {
 
 
-  /*
-  struct body *stars = malloc (100000* sizeof(struct body ));
-  memset(stars, 0, 100000*sizeof(struct body));   
-  
-  stars = createBodiesRec(100000, 1, stars);
-  */
-
-  struct body *stars = createBodies(100000);
 
   int N = 200;
   int iter = 1000;
   if(argc == 1) {
     //    addForce(&a, &b);
-    printf("Test y position: %d\n", stars[5].position_y);
 
     //    printf("Test array: %f\n", starList[0]->.force_x);
   }
@@ -184,6 +174,18 @@ int main(int argc, char* argv[]) {
       N = atoi(argv[1]);
       iter = atoi(argv[2]);
     }
+
+
+  struct body *stars = createBodies(N);
+  //addForce(&stars[0], &stars[1]);
+  updateForces(1, &stars[0]);
+  setAcceleration(&stars[0]);
+  setVelocity(&stars[0]);
+  setPosition(&stars[0]);
+
+  printf("Test y acceleration: %f\n", stars[0].acceleration_y);
+  printf("Test y velocity: %f\n", stars[0].velocity_y);
+  printf("Test y velocity: %d\n", stars[0].position_y);
 
 #ifdef ANIMATE
   XPoint* points = malloc(sizeof(XPoint)*N);

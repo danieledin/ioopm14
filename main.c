@@ -66,8 +66,8 @@ static struct body *createBodies (int N)
   memset(stars, 0, N*sizeof(struct body));
   for (i = 0; i < N; i++)
     {
-      stars[i].position_x = rand() % 10;
-      stars[i].position_y = rand() % 10;
+      stars[i].position_x = rand() % 350 + 100;
+      stars[i].position_y = rand() % 350 + 100;
       stars[i].mass = rand() % 1000000000 + 1000000000;
     }
 
@@ -99,33 +99,43 @@ static float distance(body a, body b) {
 static void addForce(body *a, body *b)
 {
 
-  
+  // DIV 0!
+  float force_x;
+  float force_y;
   float distance_x = (a->position_x - b->position_x);
-  float force_x = ((a->mass * b->mass) / distance_x) * G;
+  if (distance_x != 0)
+    {
+      force_x = ((a->mass * b->mass) / (fabsf (distance_x))) * G;
+    }
   float distance_y = (a->position_y - b->position_y);
-  float force_y = ((a->mass * b->mass) / distance_y) * G;
+  if (distance_y != 0)
+    {
+      force_y = ((a->mass * b->mass) / (fabsf (distance_y))) * G;
+    }
+
+
 
   if (distance_x < 0)
     {
-      a->force_x += 0 - force_x;
-      b->force_x += force_x;
+      a->force_x += force_x;
+      b->force_x += 0 - force_x;
     }
   else if (distance_x > 0)
     {
-      a->force_x += force_x;
+      a->force_x += 0 - force_x;
 
-      b->force_x += 0 - force_x;
+      b->force_x += force_x;
     }
 
   if (distance_y < 0)
     {
-      a->force_y += 0 - force_y;
-      b->force_y += force_y;
+      a->force_y += force_y;
+      b->force_y += 0 - force_y;
     }
   else if (distance_y > 0)
     {
-      a->force_y += force_y;
-      b->force_y += 0 - force_y;
+      a->force_y += 0 - force_y;
+      b->force_y += force_y;
     }
  
 }
@@ -145,8 +155,17 @@ void init(int N, body* star)
 
 static void updateForces(int N, body* star)
 {
-  addForce(&star, &star[1]);
-
+  for (int i = 0; i < N; i++)
+    {
+      for (int j = i+1; j <= N; j++)
+	{ 
+	  addForce(&star[i], &star[j]);
+	}   
+      setAcceleration(&star[i]);
+      setVelocity(&star[i]);
+    }
+  setAcceleration(&star[N]);
+  setVelocity(&star[N]);
 }
 
 // Manually copy coordinates from stars into points (to be drawn).
@@ -164,11 +183,7 @@ int main(int argc, char* argv[]) {
 
   int N = 200;
   int iter = 1000;
-  if(argc == 1) {
-    //    addForce(&a, &b);
 
-    //    printf("Test array: %f\n", starList[0]->.force_x);
-  }
   
   if(argc == 3)
     {
@@ -178,13 +193,13 @@ int main(int argc, char* argv[]) {
 
 
   struct body *stars = createBodies(N);
-  //addForce(&stars[0], &stars[1]);
-  updateForces(1, &stars[0]);
-  setAcceleration(&stars[0]);
-  setVelocity(&stars[0]);
-  setPosition(&stars[0]);
+  updateForces(N, &stars[0]);
+  printf("random: %f\n", newRand());
+
+
 
   printf("Test y acceleration: %f\n", stars[0].acceleration_y);
+  printf("Test y acceleration no. 199: %f\n", stars[199].acceleration_y);
   printf("Test y velocity: %f\n", stars[0].velocity_y);
   printf("Test y velocity: %d\n", stars[0].position_y);
 

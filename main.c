@@ -82,7 +82,8 @@ static void update(body* a, prec dt)
 
 
 static void resetForce(body* b) {
-
+  b->force_y = 0;
+  b->force_x = 0;
 }
 
  
@@ -149,7 +150,7 @@ static prec newRand()
 
 void init(int N, body* star)
 {
-
+  //kopiera createBodies hit 
 }
 
 
@@ -174,6 +175,7 @@ static void updateForces(int N, body* star)
 #ifdef ANIMATE
 static void copyToXBuffer(body* star, XPoint* points, int N)
 {
+  // points->x = star->position_x
 }
 #endif
 

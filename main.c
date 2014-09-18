@@ -44,8 +44,8 @@ static void setVelocity (struct body *star)
 
 static void setAcceleration (struct body *star)
 {
-  star->acceleration_x += (star->force_x) / (star->mass);
-  star->acceleration_y += (star->force_y) / (star->mass);
+  star->acceleration_x = (star->force_x) / (star->mass);
+  star->acceleration_y = (star->force_y) / (star->mass);
 }
 
 static void setPosition (struct body *star)

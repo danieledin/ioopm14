@@ -249,15 +249,16 @@ int main(int argc, char* argv[]) {
 
 #endif
 
-  updateForces(N, &stars[0]);
-  resetForce(&stars[0], N);
   clock_t start = clock();
   for(int i = 0; i < iter; i++)
     {
-      printf("position_x [0] test: %d\n", stars[0].position_x);
-      printf("Test y acceleration: %f\n", stars[0].acceleration_y);
+
+      updateForces(N, &stars[0]);
+      resetForce(&stars[0], N);
+      //printf("position_x [0] test: %d\n", stars[0].position_x);
+      //printf("Test y acceleration: %f\n", stars[0].acceleration_y);
       //printf("Test y acceleration no. 199: %f\n", stars[199].acceleration_y);
-      printf("Test y velocity: %f\n", stars[0].velocity_y);
+      //printf("Test y velocity: %f\n", stars[0].velocity_y);
 
 #ifdef ANIMATE
       copyToXBuffer(&stars[0], points, N);

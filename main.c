@@ -17,9 +17,9 @@
 
 
 //G expressed in tons of kilos
-static float G = 0.0667384;
+static float G = 1;
 //static float G = 0.0000000667384;
-static float G = 0.00667384;
+
 
 static prec gdt = 0.00001;
 
@@ -35,7 +35,11 @@ typedef struct body {
   float force_y;
 } body;
 
-
+static prec newRand() 
+{
+  prec r = (prec)((double)rand()/(double)RAND_MAX);
+  return r;
+}
 
 static void setVelocity (struct body *star)
 {
@@ -71,7 +75,7 @@ static struct body *createBodies (int N)
     {
       stars[i].position_x = rand() % 100 + 350;
       stars[i].position_y = rand() % 100 + 350;
-      stars[i].mass = rand() % 1000 + 3000;
+      stars[i].mass = newRand()*2;
     }
 
   return stars; 
@@ -148,11 +152,7 @@ static void addForce(body *a, body *b)
  
 }
 
-static prec newRand() 
-{
-  prec r = (prec)((double)rand()/(double)RAND_MAX);
-  return r;
-}
+
 
 
 void init(int N, body* star)

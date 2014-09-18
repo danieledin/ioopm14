@@ -68,7 +68,11 @@ static struct body *createBodies (int N)
     {
       stars[i].position_x = rand() % 100 + 350;
       stars[i].position_y = rand() % 100 + 350;
+<<<<<<< HEAD
       stars[i].mass = rand() % 100000000 + 100000000;
+=======
+      stars[i].mass = rand() % 1000 + 1000;
+>>>>>>> 7ebf2b370a1932deefd22eb6799f9492f216dd1d
     }
 
   return stars; 

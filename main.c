@@ -17,9 +17,9 @@
 
 
 //G expressed in tons of kilos
-static float G = 0.0000000667384;
+static float G = 0.0667384;
 
-static prec gdt = 0.0001;
+static prec gdt = 0.00001;
 
 typedef struct body {
   int position_x;
@@ -50,8 +50,8 @@ static void setAcceleration (struct body *star)
 
 static void setPosition (struct body *star)
 {
-  star->position_x = (star->position_x) + ((star->velocity_x) * gdt) + (((star->acceleration_x) * gdt * gdt) / 2);
-  star->position_y = (star->position_y) + ((star->velocity_y) * gdt) + (((star->acceleration_y) * gdt * gdt) / 2);
+  star->position_x = (star->position_x) + ((star->velocity_x) * gdt ) + (((star->acceleration_x) * gdt * gdt) / 2);
+  star->position_y = (star->position_y) + ((star->velocity_y) * gdt ) + (((star->acceleration_y) * gdt * gdt) / 2);
 
 } 
 
@@ -68,7 +68,7 @@ static struct body *createBodies (int N)
     {
       stars[i].position_x = rand() % 100 + 350;
       stars[i].position_y = rand() % 100 + 350;
-      stars[i].mass = rand() % 1000000 + 3000000;
+      stars[i].mass = rand() % 1000 + 3000;
     }
 
   return stars; 
@@ -254,7 +254,8 @@ int main(int argc, char* argv[]) {
     {
 
       updateForces(N, &stars[0]);
-      printf("Test force %f\n", stars[8].force_x);
+      printf("Test force y %f\n", stars[8].force_y);
+      printf("Test force x %f\n", stars[8].force_x);
       resetForce(&stars[0], N);
       //printf("position_x [0] test: %d\n", stars[0].position_x);
       printf("Test y acceleration: %f\n", stars[8].acceleration_y);

@@ -184,8 +184,8 @@ static void copyToXBuffer(body* star, XPoint* points, int N)
   // points->x = star->position_x
   for (int i = 0; i <= N; i++)
     {
-      points[i]->x = star[i]->position_x;
-      points[i]->y = star[i]->position_y;
+      points[i].x = star[i].position_x;
+      points[i].y = star[i].position_y;
     }
 }
 #endif

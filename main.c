@@ -123,11 +123,11 @@ static void addForce(body *a, body *b)
   if (distance_x < 0)
     {
       a->force_x += force_x;
-      b->force_x += 0 - force_x;
+      b->force_x -= force_x;
     }
   else if (distance_x > 0)
     {
-      a->force_x += 0 - force_x;
+      a->force_x -= force_x;
 
       b->force_x += force_x;
     }
@@ -135,11 +135,11 @@ static void addForce(body *a, body *b)
   if (distance_y < 0)
     {
       a->force_y += force_y;
-      b->force_y += 0 - force_y;
+      b->force_y -= force_y;
     }
   else if (distance_y > 0)
     {
-      a->force_y += 0 - force_y;
+      a->force_y -= force_y;
       b->force_y += force_y;
     }
  

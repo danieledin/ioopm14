@@ -71,19 +71,23 @@ static struct body *createBodies (int N)
       stars[i].mass = rand() % 1000000000 + 1000000000;
     }
 
-  return stars;
+  return stars; 
 
 }
 
 static void update(body* a, prec dt)
 {
-
+  
 }
 
 
-static void resetForce(body* b) {
-  b->force_y = 0;
-  b->force_x = 0;
+static void resetForce(body* star, int N)
+{
+  for (int i = 0; i <= N; i++)
+    {
+      star[i].force_y = 0;
+      star[i].force_x = 0;
+    }
 }
 
  
@@ -164,9 +168,11 @@ static void updateForces(int N, body* star)
 	}   
       setAcceleration(&star[i]);
       setVelocity(&star[i]);
+      setPosition(&star[i]);
     }
   setAcceleration(&star[N]);
   setVelocity(&star[N]);
+  setPosition(&star[N]);
 }
 
 // Manually copy coordinates from stars into points (to be drawn).
@@ -176,6 +182,11 @@ static void updateForces(int N, body* star)
 static void copyToXBuffer(body* star, XPoint* points, int N)
 {
   // points->x = star->position_x
+  for (int i = 0; i <= N; i++)
+    {
+      points[i]->x = star[i]->position_x;
+      points[i]->y = star[i]->position_y;
+    }
 }
 #endif
 
@@ -195,16 +206,24 @@ int main(int argc, char* argv[]) {
 
 
   struct body *stars = createBodies(N);
-  updateForces(N, &stars[0]);
+
+
+  //  copyToXBuffer(&stars, &points, N);
+  /*
   printf("random: %f\n", newRand());
 
+  printf("position_x [0] test: %d\n", stars[0].position_x);
+  printf("position_x [52] test: %d\n", stars[52].position_x);
 
 
   printf("Test y acceleration: %f\n", stars[0].acceleration_y);
   printf("Test y acceleration no. 199: %f\n", stars[199].acceleration_y);
   printf("Test y velocity: %f\n", stars[0].velocity_y);
   printf("Test y velocity: %d\n", stars[0].position_y);
+  printf("Test force old %f\n", stars[8].force_x);
 
+  printf("Test force new %f\n", stars[8].force_x);
+  */
 #ifdef ANIMATE
   XPoint* points = malloc(sizeof(XPoint)*N);
   Display* disp;
@@ -233,9 +252,15 @@ int main(int argc, char* argv[]) {
   clock_t start = clock();
   for(int i = 0; i < iter; i++)
     {
+      updateForces(N, &stars[0]);
+      resetForce(&stars[0], N);
+      printf("position_x [0] test: %d\n", stars[0].position_x);
+      printf("Test y acceleration: %f\n", stars[0].acceleration_y);
+      //printf("Test y acceleration no. 199: %f\n", stars[199].acceleration_y);
+      printf("Test y velocity: %f\n", stars[0].velocity_y);
 
 #ifdef ANIMATE
-      copyToXBuffer(star, points, N);
+      copyToXBuffer(&stars[0], points, N);
       XDrawPoints(disp, window, gc, points, N, CoordModeOrigin);
       XClearWindow(disp,window);	
 #endif

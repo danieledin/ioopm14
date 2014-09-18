@@ -37,8 +37,8 @@ typedef struct body {
 
 static void setVelocity (struct body *star)
 {
-  star->velocity_x = (star->velocity_x) + (star->acceleration_x) * gdt;
-  star->velocity_y = (star->velocity_y) + (star->acceleration_y) * gdt;
+  star->velocity_x = (star->velocity_x) + ((star->acceleration_x) * gdt);
+  star->velocity_y = (star->velocity_y) + ((star->acceleration_y) * gdt);
 
 }
 
@@ -68,11 +68,7 @@ static struct body *createBodies (int N)
     {
       stars[i].position_x = rand() % 100 + 350;
       stars[i].position_y = rand() % 100 + 350;
-<<<<<<< HEAD
-      stars[i].mass = rand() % 100000000 + 100000000;
-=======
-      stars[i].mass = rand() % 1000 + 1000;
->>>>>>> 7ebf2b370a1932deefd22eb6799f9492f216dd1d
+      stars[i].mass = rand() % 1000000 + 3000000;
     }
 
   return stars; 
@@ -261,9 +257,9 @@ int main(int argc, char* argv[]) {
       printf("Test force %f\n", stars[8].force_x);
       resetForce(&stars[0], N);
       //printf("position_x [0] test: %d\n", stars[0].position_x);
-      //printf("Test y acceleration: %f\n", stars[0].acceleration_y);
+      printf("Test y acceleration: %f\n", stars[8].acceleration_y);
       //printf("Test y acceleration no. 199: %f\n", stars[199].acceleration_y);
-      //printf("Test y velocity: %f\n", stars[0].velocity_y);
+      printf("Test y velocity: %f\n", stars[8].velocity_y);
 
 #ifdef ANIMATE
       copyToXBuffer(&stars[0], points, N);

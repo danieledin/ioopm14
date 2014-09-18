@@ -44,8 +44,8 @@ static void setVelocity (struct body *star)
 
 static void setAcceleration (struct body *star)
 {
-  star->acceleration_x += (star->force_x) / (star->mass);
-  star->acceleration_y += (star->force_y) / (star->mass);
+  star->acceleration_x = (star->force_x) / (star->mass);
+  star->acceleration_y = (star->force_y) / (star->mass);
 }
 
 static void setPosition (struct body *star)
@@ -66,9 +66,9 @@ static struct body *createBodies (int N)
   memset(stars, 0, N*sizeof(struct body));
   for (i = 0; i < N; i++)
     {
-      stars[i].position_x = rand() % 350 + 100;
-      stars[i].position_y = rand() % 350 + 100;
-      stars[i].mass = rand() % 1000 + 1000;
+      stars[i].position_x = rand() % 100 + 350;
+      stars[i].position_y = rand() % 100 + 350;
+      stars[i].mass = rand() % 100000000 + 100000000;
     }
 
   return stars; 
@@ -254,6 +254,7 @@ int main(int argc, char* argv[]) {
     {
 
       updateForces(N, &stars[0]);
+      printf("Test force %f\n", stars[8].force_x);
       resetForce(&stars[0], N);
       //printf("position_x [0] test: %d\n", stars[0].position_x);
       //printf("Test y acceleration: %f\n", stars[0].acceleration_y);

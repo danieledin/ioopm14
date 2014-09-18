@@ -242,7 +242,7 @@ int main(int argc, char* argv[]) {
 
   XClearWindow(disp,window);	
 	
-  copyToXBuffer(star, points, N);
+  copyToXBuffer(stars, points, N);
   XDrawPoints(disp, window, gc, points, N, 0);
 
   XFlush(disp);

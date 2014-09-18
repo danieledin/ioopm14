@@ -18,6 +18,8 @@
 
 //G expressed in tons of kilos
 static float G = 0.0667384;
+//static float G = 0.0000000667384;
+static float G = 0.00667384;
 
 static prec gdt = 0.00001;
 
@@ -57,6 +59,7 @@ static void setPosition (struct body *star)
 
 static struct body *createBodies (int N)
 {
+
   time_t t;
   srand((unsigned) time(&t));
 
@@ -123,11 +126,11 @@ static void addForce(body *a, body *b)
   if (distance_x < 0)
     {
       a->force_x += force_x;
-      b->force_x += 0 - force_x;
+      b->force_x -= force_x;
     }
   else if (distance_x > 0)
     {
-      a->force_x += 0 - force_x;
+      a->force_x -= force_x;
 
       b->force_x += force_x;
     }
@@ -135,11 +138,11 @@ static void addForce(body *a, body *b)
   if (distance_y < 0)
     {
       a->force_y += force_y;
-      b->force_y += 0 - force_y;
+      b->force_y -= force_y;
     }
   else if (distance_y > 0)
     {
-      a->force_y += 0 - force_y;
+      a->force_y -= force_y;
       b->force_y += force_y;
     }
  
@@ -256,11 +259,12 @@ int main(int argc, char* argv[]) {
       updateForces(N, &stars[0]);
       printf("Test force y %f\n", stars[8].force_y);
       printf("Test force x %f\n", stars[8].force_x);
+      printf("Test force %f\n", stars[100].force_x);
       resetForce(&stars[0], N);
       //printf("position_x [0] test: %d\n", stars[0].position_x);
-      printf("Test y acceleration: %f\n", stars[8].acceleration_y);
+      printf("Test y acceleration: %f\n", stars[100].acceleration_y);
       //printf("Test y acceleration no. 199: %f\n", stars[199].acceleration_y);
-      printf("Test y velocity: %f\n", stars[8].velocity_y);
+      printf("Test y velocity: %f\n", stars[100].velocity_y);
 
 #ifdef ANIMATE
       copyToXBuffer(&stars[0], points, N);

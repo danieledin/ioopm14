@@ -41,6 +41,12 @@ static prec newRand()
   return r;
 }
 
+static void setAcceleration (struct body *star)
+{
+  star->acceleration_x = (star->force_x) / (star->mass);
+  star->acceleration_y = (star->force_y) / (star->mass);
+}
+
 static void setVelocity (struct body *star)
 {
   star->velocity_x = (star->velocity_x) + ((star->acceleration_x) * gdt);
@@ -49,17 +55,10 @@ static void setVelocity (struct body *star)
 }
 
 
-
-static void setAcceleration (struct body *star)
-{
-  star->acceleration_x = (star->force_x) / (star->mass);
-  star->acceleration_y = (star->force_y) / (star->mass);
-}
-
 static void setPosition (struct body *star)
 {
-  star->position_x = (star->position_x) + ((star->velocity_x) * gdt ) + (((star->acceleration_x) * gdt * gdt) / 2);
-  star->position_y = (star->position_y) + ((star->velocity_y) * gdt ) + (((star->acceleration_y) * gdt * gdt) / 2);
+  star->position_x = (star->position_x) + ((star->velocity_x) * gdt ) + (0.5*((star->acceleration_x) * gdt * gdt));
+  star->position_y = (star->position_y) + ((star->velocity_y) * gdt ) + (0.5*((star->acceleration_y) * gdt * gdt));
 
 } 
 
@@ -78,6 +77,8 @@ static struct body *createBodies (int N)
       stars[i].position_x = rand() % 100 + 350;
       stars[i].position_y = rand() % 100 + 350;
       stars[i].mass = newRand()*2;
+      stars[i].velocity_x = newRand()*10;
+      stars[i].velocity_y = newRand()*10;
     }
 
   return stars; 

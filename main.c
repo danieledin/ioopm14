@@ -17,7 +17,7 @@
 
 
 //G expressed in tons of kilos
-static float G = 1;
+static float G =1;
 //static float G = 0.0000000667384;
 
 
@@ -47,6 +47,8 @@ static void setVelocity (struct body *star)
   star->velocity_y = (star->velocity_y) + ((star->acceleration_y) * gdt);
 
 }
+
+
 
 static void setAcceleration (struct body *star)
 {
@@ -97,7 +99,6 @@ static void resetForce(body* star, int N)
     }
 }
 
- 
 
 static float distance(body a, body b) {
   int x = (a.position_x - b.position_x) * (a.position_x - b.position_x);
@@ -107,6 +108,7 @@ static float distance(body a, body b) {
 
   return distance;
 }
+ 
 
 static void addForce(body *a, body *b)
 {
@@ -114,12 +116,12 @@ static void addForce(body *a, body *b)
   // DIV 0!
   float force_x;
   float force_y;
-  float distance_x = (a->position_x - b->position_x);
+  float distance_x = (distance(a, b));
   if (distance_x != 0)
     {
       force_x = ((a->mass * b->mass) / (fabsf (distance_x))) * G;
     }
-  float distance_y = (a->position_y - b->position_y);
+  float distance_y = (distance(a, b));
   if (distance_y != 0)
     {
       force_y = ((a->mass * b->mass) / (fabsf (distance_y))) * G;

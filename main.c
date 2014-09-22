@@ -68,8 +68,8 @@ static struct body *createBodies (int N)
   memset(stars, 0, N*sizeof(struct body));
   for (i = 0; i < N; i++)
     {
-      stars[i].position_x = rand() % 100 + 350;
-      stars[i].position_y = rand() % 100 + 350;
+      stars[i].position_x = rand() % 100 + 351;
+      stars[i].position_y = rand() % 100 + 351;
       stars[i].mass = rand() % 1000 + 3000;
     }
 

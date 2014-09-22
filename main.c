@@ -17,11 +17,17 @@
 
 
 //G expressed in tons of kilos
-static float G =1;
+static float G = 0.010;
 //static float G = 0.0000000667384;
 
 
-static prec gdt = 0.00001;
+static prec gdt = 0.003;
+/*
+void waitFor (unsigned int secs) {
+	retTime = time(0) + secs;     // Get finishing time.
+	while (time(0) < retTime);    // Loop until it arrives.
+}
+*/
 
 typedef struct body {
   int position_x;
@@ -57,11 +63,10 @@ static void setVelocity (struct body *star)
 
 static void setPosition (struct body *star)
 {
-  star->position_x = (star->position_x) + ((star->velocity_x) * gdt ) + (0.5*((star->acceleration_x) * gdt * gdt));
-  star->position_y = (star->position_y) + ((star->velocity_y) * gdt ) + (0.5*((star->acceleration_y) * gdt * gdt));
+  star->position_x = (star->position_x) + ((star->velocity_x) * gdt) + (0.5*((star->acceleration_x) * gdt * gdt));
+  star->position_y = (star->position_y) + ((star->velocity_y) * gdt) + (0.5*((star->acceleration_y) * gdt * gdt));
 
 } 
-
 static struct body *createBodies (int N)
 {
 
@@ -74,11 +79,17 @@ static struct body *createBodies (int N)
   memset(stars, 0, N*sizeof(struct body));
   for (i = 0; i < N; i++)
     {
-      stars[i].position_x = rand() % 100 + 350;
-      stars[i].position_y = rand() % 100 + 350;
-      stars[i].mass = newRand()*2;
-      stars[i].velocity_x = newRand()*10;
-      stars[i].velocity_y = newRand()*10;
+
+      float ang = 360 * newRand ();
+      
+      stars[i].position_x = (cos(ang) * newRand() * 100) + 400;
+      stars[i].position_y = (sin(ang) * newRand() * 100) + 400;
+
+
+      stars[i].mass = newRand()*2000;
+      
+      stars[i].velocity_x = (rand() % 2 - 1)*20;
+      stars[i].velocity_y = (rand() % 2 - 1)*20;
     }
 
   return stars; 
@@ -119,14 +130,19 @@ static void addForce(body *a, body *b)
   float force_y;
   float distance_x = (a->position_x - b->position_x);
   float distance_y = (a->position_y - b->position_y);
-  float distance_r = (distance(a, b));
+  //  float distance_r = (distance(a, b));
 
-  if (distance_r != 0)
+  if (distance_y != 0)
     {
-      force_y = ((a->mass * b->mass) / (fabsf (distance_r))) * G;
-      force_x = ((a->mass * b->mass) / (fabsf (distance_r))) * G;
+      force_y = ((a->mass * b->mass) / (fabsf (distance_y))) * G;
+
     }
 
+  if (distance_x != 0)
+    {
+      force_x = ((a->mass * b->mass) / (fabsf (distance_x))) * G;
+    }
+  
 
 
   if (distance_x < 0)
@@ -267,7 +283,8 @@ int main(int argc, char* argv[]) {
       printf("Test y acceleration: %f\n", stars[100].acceleration_y);
       //printf("Test y acceleration no. 199: %f\n", stars[199].acceleration_y);
       printf("Test y velocity: %f\n", stars[100].velocity_y);
-
+      //      waitFor(5);
+      
 #ifdef ANIMATE
       copyToXBuffer(&stars[0], points, N);
       XDrawPoints(disp, window, gc, points, N, CoordModeOrigin);

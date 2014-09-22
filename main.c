@@ -17,10 +17,11 @@
 
 
 //G expressed in tons of kilos
+static float G =1;
 //static float G = 0.0000000667384;
-static float G = 0.00667384;
 
-static prec gdt = 0.0001;
+
+static prec gdt = 0.00001;
 
 typedef struct body {
   int position_x;
@@ -34,13 +35,10 @@ typedef struct body {
   float force_y;
 } body;
 
-
-
-static void setVelocity (struct body *star)
+static prec newRand() 
 {
-  star->velocity_x = (star->velocity_x) + ((star->acceleration_x) * gdt);
-  star->velocity_y = (star->velocity_y) + ((star->acceleration_y) * gdt);
-
+  prec r = (prec)((double)rand()/(double)RAND_MAX);
+  return r;
 }
 
 static void setAcceleration (struct body *star)
@@ -49,10 +47,18 @@ static void setAcceleration (struct body *star)
   star->acceleration_y = (star->force_y) / (star->mass);
 }
 
+static void setVelocity (struct body *star)
+{
+  star->velocity_x = (star->velocity_x) + ((star->acceleration_x) * gdt);
+  star->velocity_y = (star->velocity_y) + ((star->acceleration_y) * gdt);
+
+}
+
+
 static void setPosition (struct body *star)
 {
-  star->position_x = (star->position_x) + ((star->velocity_x) * gdt) + (((star->acceleration_x) * gdt * gdt) / 2);
-  star->position_y = (star->position_y) + ((star->velocity_y) * gdt) + (((star->acceleration_y) * gdt * gdt) / 2);
+  star->position_x = (star->position_x) + ((star->velocity_x) * gdt ) + (0.5*((star->acceleration_x) * gdt * gdt));
+  star->position_y = (star->position_y) + ((star->velocity_y) * gdt ) + (0.5*((star->acceleration_y) * gdt * gdt));
 
 } 
 
@@ -68,9 +74,11 @@ static struct body *createBodies (int N)
   memset(stars, 0, N*sizeof(struct body));
   for (i = 0; i < N; i++)
     {
-      stars[i].position_x = rand() % 100 + 351;
-      stars[i].position_y = rand() % 100 + 351;
-      stars[i].mass = rand() % 1000 + 3000;
+      stars[i].position_x = rand() % 100 + 350;
+      stars[i].position_y = rand() % 100 + 350;
+      stars[i].mass = newRand()*2;
+      stars[i].velocity_x = newRand()*10;
+      stars[i].velocity_y = newRand()*10;
     }
 
   return stars; 
@@ -92,16 +100,16 @@ static void resetForce(body* star, int N)
     }
 }
 
- 
 
-static float distance(body a, body b) {
-  int x = (a.position_x - b.position_x) * (a.position_x - b.position_x);
-  int y = (a.position_y - b.position_y) * (a.position_y - b.position_y);
+static float distance(struct body *a, struct body *b) {
+  int x = (a->position_x - b->position_x) * (a->position_x - b->position_x);
+  int y = (a->position_y - b->position_y) * (a->position_y - b->position_y);
 
   float distance = sqrt (x+y);
 
   return distance;
 }
+ 
 
 static void addForce(body *a, body *b)
 {
@@ -110,14 +118,13 @@ static void addForce(body *a, body *b)
   float force_x;
   float force_y;
   float distance_x = (a->position_x - b->position_x);
-  if (distance_x != 0)
-    {
-      force_x = ((a->mass * b->mass) / (fabsf (distance_x))) * G;
-    }
   float distance_y = (a->position_y - b->position_y);
-  if (distance_y != 0)
+  float distance_r = (distance(a, b));
+
+  if (distance_r != 0)
     {
-      force_y = ((a->mass * b->mass) / (fabsf (distance_y))) * G;
+      force_y = ((a->mass * b->mass) / (fabsf (distance_r))) * G;
+      force_x = ((a->mass * b->mass) / (fabsf (distance_r))) * G;
     }
 
 
@@ -147,11 +154,7 @@ static void addForce(body *a, body *b)
  
 }
 
-static prec newRand() 
-{
-  prec r = (prec)((double)rand()/(double)RAND_MAX);
-  return r;
-}
+
 
 
 void init(int N, body* star)
@@ -256,6 +259,8 @@ int main(int argc, char* argv[]) {
     {
 
       updateForces(N, &stars[0]);
+      printf("Test force y %f\n", stars[8].force_y);
+      printf("Test force x %f\n", stars[8].force_x);
       printf("Test force %f\n", stars[100].force_x);
       resetForce(&stars[0], N);
       //printf("position_x [0] test: %d\n", stars[0].position_x);

@@ -97,7 +97,7 @@ static struct body *createBodies (int N)
   
 
   memset(stars, 0, N*sizeof(struct body));
-  for (i = 0; i < N; i++)
+  for (i = 0; i < N-1; i++)
     {
 
       float ang = 360 * newRand ();
@@ -123,7 +123,7 @@ static struct body *createBodies (int N)
 
 static void resetForce(body* star, int N)
 {
-  for (int i = 0; i <= N; i++)
+  for (int i = 0; i <= N-1; i++)
     {
       star[i].force_y = 0;
       star[i].force_x = 0;
@@ -180,9 +180,9 @@ static void addForce(body *a, body *b)
 static void updateForces(int N, body* star)
 {
   //  resetForce(star, N);
-  for (int i = 0; i < N-5; i++)
+  for (int i = 0; i < N-1; i++)
     {
-      for (int j = i+1; j <= N-5; j++)
+      for (int j = i+1; j <= N-1; j++)
 	{ 
 	  addForce(&star[i], &star[j]);
 	}   
@@ -202,7 +202,7 @@ static void updateForces(int N, body* star)
 static void copyToXBuffer(body* star, XPoint* points, int N)
 {
   // points->x = star->position_x
-  for (int i = 0; i <= N; i++)
+  for (int i = 0; i <= N-1; i++)
     {
       points[i].x = star[i].position_x;
       points[i].y = star[i].position_y;

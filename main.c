@@ -95,6 +95,9 @@ static struct body *createBodies (int N)
       stars[i].position_x = (cos(ang) * newRand() * 200) + 400;
       stars[i].position_y = (sin(ang) * newRand() * 100) + 400;
       stars[i].mass = (newRand()*2) + 1;
+      stars[i].velocity_x = (400 - stars[i].position_x) * 0.1;
+      stars[i].velocity_y = (400 - stars[i].position_y) * 0.1 ;
+
     }
 
 

@@ -51,7 +51,9 @@ static prec newRand()
 static void setAcceleration (struct body *star)
 {
   star->acceleration_x = (star->force_x) / (star->mass);
-  star->acceleration_y = (star->force_y) / (star->mass);
+  star[0].acceleration_y = (star[0].force_y) / (star[0].mass);
+  
+
 }
 
 static void setVelocity (struct body *star)
@@ -85,7 +87,15 @@ static struct body *createBodies (int N)
 
   int i;
   // kolla ifall NULL!!
-  struct  body *stars = malloc (N* sizeof(struct body ));
+  struct  body *stars = malloc (N * sizeof(struct body ));
+  if (stars == NULL)
+    {
+      printf("   Malloc fail. \n   Not enough memory for struct body allocation \n");
+      exit(0);
+    }
+
+  
+
   memset(stars, 0, N*sizeof(struct body));
   for (i = 0; i < N; i++)
     {
@@ -170,9 +180,9 @@ static void addForce(body *a, body *b)
 static void updateForces(int N, body* star)
 {
   //  resetForce(star, N);
-  for (int i = 0; i < N; i++)
+  for (int i = 0; i < N-5; i++)
     {
-      for (int j = i+1; j <= N; j++)
+      for (int j = i+1; j <= N-5; j++)
 	{ 
 	  addForce(&star[i], &star[j]);
 	}   
@@ -180,11 +190,11 @@ static void updateForces(int N, body* star)
       setVelocity(&star[i]);
       setPosition(&star[i]);
     }
-  setAcceleration(&star[N]);
-  setVelocity(&star[N]);
-  setPosition(&star[N]);
+  setAcceleration(&star[N-1]);
+  setVelocity(&star[N-1]);
+  setPosition(&star[N-1]);
 }
-pr
+
 // Manually copy coordinates from stars into points (to be drawn).
 // Look at the manual file for XPoint to see which 
 // format XPoint accepts its coordinates in.
@@ -297,3 +307,5 @@ int main(int argc, char* argv[]) {
   free(stars);
   return 0;
 }
+
+

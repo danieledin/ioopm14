@@ -135,7 +135,7 @@ static float distance(struct body *a, struct body *b) {
   float x = (a->position_x - b->position_x) * (a->position_x - b->position_x);
   float y = (a->position_y - b->position_y) * (a->position_y - b->position_y);
 
-  float distance = sqrt (x+y);
+  float distance = sqrt (x+y);  // float sqrt!
 
   return distance;
   }
@@ -190,10 +190,9 @@ static void updateForces(int N, body* star)
       setVelocity(&star[i]);
       setPosition(&star[i]);
     }
-  setAcceleration(&star[N-1]);
-  setVelocity(&star[N-1]);
-  setPosition(&star[N-1]);
 }
+
+
 
 // Manually copy coordinates from stars into points (to be drawn).
 // Look at the manual file for XPoint to see which 
@@ -274,9 +273,9 @@ int main(int argc, char* argv[]) {
     {
       resetForce(stars, N);
       updateForces(N, &stars[0]);
-      /*
-      printf("position_x [ 0] test: %d\n", stars[0].position_x);
-      printf("position_y [ 0] test: %d\n", stars[0].position_y);
+      /*      
+      printf("position_x [ 0] test: %f\n", stars[0].position_x);
+      printf("position_y [ 0] test: %f\n", stars[0].position_y);
       printf("Test force y %f\n", stars[0].force_y);
       printf("Test force x %f\n", stars[0].force_x);
       printf("Test x velocity: %f\n", stars[0].velocity_x);

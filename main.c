@@ -18,11 +18,11 @@
 
 
 //G expressed in tons of kilos
-static float G = -0.000001;
+static float G = 0.05;
 //static float G = 0.0000000667384;
 
 
-static prec gdt = 0.0001;
+static prec gdt = 0.002;
 /*
 void waitFor (unsigned int secs) {
 	retTime = time(0) + secs;     // Get finishing time.
@@ -31,8 +31,8 @@ void waitFor (unsigned int secs) {
 */
 
 typedef struct body {
-  int position_x;
-  int position_y;
+  float position_x;
+  float position_y;
   float  mass;
   float velocity_x;
   float velocity_y;
@@ -97,6 +97,7 @@ static struct body *createBodies (int N)
       stars[i].mass = (newRand()*2) + 1;
     }
 
+
   return stars; 
 
 }
@@ -117,14 +118,14 @@ static void resetForce(body* star, int N)
 }
 
 
-/*static float distance(struct body *a, struct body *b) {
-  int x = (a->position_x - b->position_x) * (a->position_x - b->position_x);
-  int y = (a->position_y - b->position_y) * (a->position_y - b->position_y);
+static float distance(struct body *a, struct body *b) {
+  float x = (a->position_x - b->position_x) * (a->position_x - b->position_x);
+  float y = (a->position_y - b->position_y) * (a->position_y - b->position_y);
 
   float distance = sqrt (x+y);
 
   return distance;
-  }*/
+  }
  
 
 static void addForce(body *a, body *b)
@@ -133,21 +134,22 @@ static void addForce(body *a, body *b)
   // DIV 0!
   float force_x;
   float force_y;
-  float distance_x = (a->position_x - b->position_x);
-  float distance_y = (a->position_y - b->position_y);
-  //  float distance_r = (distance(a, b));
+  float distance_x = (b->position_x - a->position_x);
+  float distance_y = (b->position_y - a->position_y);
+  float distance_r = (distance(a, b));
 
   if (distance_y != 0)
     {
       //printf("b->mass=%f\n", b->mass);
-      force_y = ((a->mass * b->mass) / distance_y) * G;
+      force_y = ((a->mass * b->mass) / (distance_r * distance_r)) * G * distance_y;
       a->force_y += force_y;
       b->force_y -= force_y;
     }
 
   if ( distance_x != 0)
     {
-      force_x = ((a->mass * b->mass) / distance_x) * G;
+      force_x = ((a->mass * b->mass) / (distance_r * distance_r)) * G * distance_x;
+     
       a->force_x += force_x;
       b->force_x -= force_x;
     }
@@ -259,6 +261,7 @@ int main(int argc, char* argv[]) {
     {
       resetForce(stars, N);
       updateForces(N, &stars[0]);
+      /*
       printf("position_x [ 0] test: %d\n", stars[0].position_x);
       printf("position_y [ 0] test: %d\n", stars[0].position_y);
       printf("Test force y %f\n", stars[0].force_y);
@@ -267,7 +270,7 @@ int main(int argc, char* argv[]) {
       printf("Test y velocity: %f\n", stars[0].velocity_y);
       printf("Test x acceleration: %f\n", stars[0].acceleration_x);
       printf("Test y acceleration: %f\n", stars[0].acceleration_y);
-      
+      */
       
 #ifdef ANIMATE
       copyToXBuffer(&stars[0], points, N);

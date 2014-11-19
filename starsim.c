@@ -1,5 +1,7 @@
 #include "starsim.h"
 
+
+
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -8,7 +10,7 @@
 #include <unistd.h>
 
 #ifdef ANIMATE
-#include <X11/Xlib.h>
+#include <X11/Xlib.h>+ 
 #include <X11/Xutil.h>
 
 #define X_SIZE 800
@@ -168,13 +170,18 @@ static void copyToXBuffer(body* star, XPoint* points, int N)
 }
 #endif
 
-int main(int argc, char* argv[]) {
 
+
+}
+*/
+#ifndef TEST
+int main(int argc, char* argv[]) {
+  
 
 
   int N = 200;
   int iter = 1000;
-
+  
   
   if(argc == 3)
     {
@@ -195,7 +202,10 @@ int main(int argc, char* argv[]) {
     }
 
 
+
+
   struct body *stars = createBodies(N);
+ 
 
 #ifdef ANIMATE
   XPoint* points = malloc(sizeof(XPoint)*N);
@@ -257,7 +267,9 @@ int main(int argc, char* argv[]) {
 #endif
     free(stars);
 
+
+
   return 0;
 }
-
+#endif
 

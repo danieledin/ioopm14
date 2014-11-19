@@ -222,27 +222,16 @@ int main(int argc, char* argv[]) {
       N = atoi(argv[1]);
       iter = atoi(argv[2]);
     }
-
+  
 
   struct body *stars = createBodies(N);
+  
+  
+
+  
+ 
 
 
-  //  copyToXBuffer(&stars, &points, N);
-  /*
-  printf("random: %f\n", newRand());
-
-  printf("position_x [0] test: %d\n", stars[0].position_x);
-  printf("position_x [52] test: %d\n", stars[52].position_x);
-
-
-  printf("Test y acceleration: %f\n", stars[0].acceleration_y);
-  printf("Test y acceleration no. 199: %f\n", stars[199].acceleration_y);
-  printf("Test y velocity: %f\n", stars[0].velocity_y);
-  printf("Test y velocity: %d\n", stars[0].position_y);
-  printf("Test force old %f\n", stars[8].force_x);
-
-  printf("Test force new %f\n", stars[8].force_x);
-  */
 #ifdef ANIMATE
   XPoint* points = malloc(sizeof(XPoint)*N);
   Display* disp;

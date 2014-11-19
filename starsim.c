@@ -1,3 +1,11 @@
+/**
+ * @file starsim.c
+ * @author Alexander Lind & Daniel Edin
+ * @date 19 nov 2014
+ * @brief A program for simulating a system of stars. 
+ * @details Running the program starts the simulation with the standard values which is 200 stars and 1000 iterations. If running the program with arguments, the first argument is the number of stars for the simulations and the second argument is for how many iterations you want to simulate the system.
+ */
+
 #include "starsim.h"
 
 #include <math.h>
@@ -25,7 +33,7 @@ static prec gdt = 0.002;
 typedef struct body {
   float position_x;
   float position_y;
-  float  mass;
+  float mass;
   float velocity_x;
   float velocity_y;
   float acceleration_x;
@@ -44,8 +52,6 @@ static void setAcceleration (struct body *star)
 {
   star->acceleration_x = (star->force_x) / (star->mass);
   star[0].acceleration_y = (star[0].force_y) / (star[0].mass);
-  
-
 }
 
 static void setVelocity (struct body *star)
@@ -62,22 +68,22 @@ static void setPosition (struct body *star)
 
 } 
 
-static struct body *createBodies (int N)
+static struct body *createBodies (int numberOfStars)
 {
 
   time_t t;
   srand((unsigned) time(&t));
 
   int i;
-  struct  body *stars = malloc (N * sizeof(struct body ));
+  struct  body *stars = malloc (numberOfStars * sizeof(struct body ));
   if (stars == NULL)
     {
       printf("   Malloc fail. \n   Not enough memory for struct body allocation \n");
       exit(0);
     }
 
-  memset(stars, 0, N*sizeof(struct body));
-  for (i = 0; i < N-1; i++)
+  memset(stars, 0, numberOfStars*sizeof(struct body));
+  for (i = 0; i < numberOfStars-1; i++)
     {
       float ang = 360 * newRand ();
       stars[i].position_x = (cos(ang) * newRand() * 300) + 400;
@@ -94,12 +100,12 @@ static struct body *createBodies (int N)
 }
 
 
-static void resetForce(body* star, int N)
+static void resetForce(body* starList, int numberOfStars)
 {
-  for (int i = 0; i <= N-1; i++)
+  for (int i = 0; i <= numberOfStars-1; i++)
     {
-      star[i].force_y = 0;
-      star[i].force_x = 0;
+      starList[i].force_y = 0;
+      starList[i].force_x = 0;
     }
 }
 
@@ -111,7 +117,7 @@ static float distance(struct body *a, struct body *b) {
   float distance = sqrt (x+y);  // float sqrt!
 
   return distance;
-  }
+}
  
 
 static void addForce(body *a, body *b)
@@ -138,11 +144,11 @@ static void addForce(body *a, body *b)
 }
 
 
-static void updateForces(int N, body* star)
+static void updateForces(int numberOfStars, body* star)
 {
-  for (int i = 0; i < N-1; i++)
+  for (int i = 0; i < numberOfStars-1; i++)
     {
-      for (int j = i+1; j <= N-1; j++)
+      for (int j = i+1; j <= numberOfStars-1; j++)
 	{ 
 	  addForce(&star[i], &star[j]);
 	}   
@@ -154,9 +160,6 @@ static void updateForces(int N, body* star)
 
 
 
-// Manually copy coordinates from stars into points (to be drawn).
-// Look at the manual file for XPoint to see which 
-// format XPoint accepts its coordinates in.
 #ifdef ANIMATE
 static void copyToXBuffer(body* star, XPoint* points, int N)
 {
@@ -175,7 +178,12 @@ int main(int argc, char* argv[]) {
   int N = 200;
   int iter = 1000;
 
-  
+  int i = 0;
+  while (i<100) {
+    int rand = newRand();  
+    printf("%d\n", rand);
+    i++;
+  }
   if(argc == 3)
     {
       while (atoi(argv[1]) < 0 )
@@ -255,7 +263,7 @@ int main(int argc, char* argv[]) {
   free(gc);
   free(points);  
 #endif
-    free(stars);
+  free(stars);
 
   return 0;
 }

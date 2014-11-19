@@ -1,10 +1,10 @@
-Make animate to show a nice window
-Make clean to wipe compiled files
-Make test to run without the animation
-Make gprof to compile and run profiling
+To build the program:
+Type "make starsim" in the terminal.
+ 
+To run the program:
+Type "make run" in the terminal. In order to run the program, the library X11 must be installed on the computer. 
 
-
-Redovisade mål:
+Achievements unlocked with the program:
 A1, A2, A3
 F13
 J26
@@ -15,3 +15,7 @@ T53, T54
 U55
 V56
 W57
+
+Possible improvements:
+* Customizable window size.
+ 

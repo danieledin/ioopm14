@@ -1,13 +1,15 @@
-# Make animate to show a nice window
-# Make starsim to only benchmark
+CC = gcc
+FLAGS = -Wall -ggdb -std=c99
 
-starsim:
-	gcc -std=c99 main.c -o main  -lm 
+starsim: 
+	$(CC) $(FLAGS)  starsim main.c -lm
+
 animate:
-	gcc -std=c99 -DANIMATE main.c -o main -lm -lX11
-run:
-	./main
-clean: 
-	rm *.o
+	gcc -std=c99 -DANIMATE main.c -o starsim  -lm -lX11
+run: animate
+	./starsim 
+
+clean:
+	rm starsim
 
 .PHONY: clean

@@ -7,9 +7,6 @@
  */
 
 #include "starsim.h"
-
-
-
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -17,22 +14,8 @@
 #include <string.h>
 #include <unistd.h>
 
-#ifdef ANIMATE
-#include <X11/Xlib.h> 
-#include <X11/Xutil.h>
 
-#define X_SIZE 800
-#define Y_SIZE 800
-#endif
-
-#define prec float
-#define PI 3.14159265359
-
-static float G = 0.8;
-
-static prec gdt = 0.002;
-
-typedef struct body {
+struct Body {
   float position_x;
   float position_y;
   float mass;
@@ -42,49 +25,73 @@ typedef struct body {
   float acceleration_y;
   float force_x;
   float force_y;
-} body;
+};
 
-static prec newRand() 
+
+
+#ifdef ANIMATE
+#include <X11/Xlib.h> 
+#include <X11/Xutil.h>
+
+#define X_SIZE 800
+#define Y_SIZE 800
+
+#endif // ANIMATE
+
+#define prec float
+#define PI 3.14159265359
+
+static float G = 0.8;
+
+static prec gdt = 0.002;
+
+
+
+
+//typedef struct Body body;
+
+prec newRand() 
 {
   prec r = (prec)((double)rand()/(double)RAND_MAX);
   return r;
 }
 
-static void setAcceleration (struct body *star)
+ void setAcceleration (Star* star)
 {
+//printf("hasfhaksdhfkljashdfkljahsdjhka2");
   star->acceleration_x = (star->force_x) / (star->mass);
   star[0].acceleration_y = (star[0].force_y) / (star[0].mass);
 }
 
-static void setVelocity (struct body *star)
+ void setVelocity (Star* star)
 {
   star->velocity_x = (star->velocity_x) + ((star->acceleration_x) * gdt);
   star->velocity_y = (star->velocity_y) + ((star->acceleration_y) * gdt);
 
 }
 
-static void setPosition (struct body *star)
+ void setPosition (Star* star)
 {
   star->position_x = (star->position_x) + ((star->velocity_x) * gdt) + (0.5*((star->acceleration_x) * gdt * gdt));
   star->position_y = (star->position_y) + ((star->velocity_y) * gdt) + (0.5*((star->acceleration_y) * gdt * gdt));
 
 } 
 
-static struct body *createBodies (int numberOfStars)
+Star* createBodies (int numberOfStars)
 {
 
   time_t t;
   srand((unsigned) time(&t));
 
   int i;
-  struct  body *stars = malloc (numberOfStars * sizeof(struct body ));
+  Star* stars = malloc (numberOfStars * sizeof(struct Body ));
   if (stars == NULL)
     {
-      printf("   Malloc fail. \n   Not enough memory for struct body allocation \n");
+      printf("   Malloc fail. \n   Not enough memory for Star allocation \n");
       exit(0);
     }
 
-  memset(stars, 0, numberOfStars*sizeof(struct body));
+  memset(stars, 0, numberOfStars*sizeof(struct Body));
   for (i = 0; i < numberOfStars-1; i++)
     {
       float ang = 360 * newRand ();
@@ -102,7 +109,7 @@ static struct body *createBodies (int numberOfStars)
 }
 
 
-static void resetForce(body* starList, int numberOfStars)
+ void resetForce(Star* starList, int numberOfStars)
 {
   for (int i = 0; i <= numberOfStars-1; i++)
     {
@@ -112,7 +119,7 @@ static void resetForce(body* starList, int numberOfStars)
 }
 
 
-static float distance(struct body *a, struct body *b) {
+ float distance(Star* a, Star* b) {
   float x = (a->position_x - b->position_x) * (a->position_x - b->position_x);
   float y = (a->position_y - b->position_y) * (a->position_y - b->position_y);
 
@@ -122,7 +129,7 @@ static float distance(struct body *a, struct body *b) {
 }
  
 
-static void addForce(body *a, body *b)
+ void addForce(Star* a, Star* b)
 {
   float force_x;
   float force_y;
@@ -146,7 +153,7 @@ static void addForce(body *a, body *b)
 }
 
 
-static void updateForces(int numberOfStars, body* star)
+ void updateForces(int numberOfStars, Star* star)
 {
   for (int i = 0; i < numberOfStars-1; i++)
     {
@@ -163,7 +170,7 @@ static void updateForces(int numberOfStars, body* star)
 
 
 #ifdef ANIMATE
-static void copyToXBuffer(body* star, XPoint* points, int N)
+ void copyToXBuffer(Star* star, XPoint* points, int N)
 {
   for (int i = 0; i <= N-1; i++)
     {
@@ -171,11 +178,11 @@ static void copyToXBuffer(body* star, XPoint* points, int N)
       points[i].y = star[i].position_y;
     }
 }
-#endif
+#endif // ANIMATE
 
 
 
-
+/*
 
 #ifndef UNITTEST
 int main(int argc, char* argv[]) {
@@ -213,7 +220,7 @@ int main(int argc, char* argv[]) {
 
 
 
-  struct body *stars = createBodies(N);
+  Star* stars = createBodies(N);
 
 
 #ifdef ANIMATE
@@ -245,7 +252,7 @@ int main(int argc, char* argv[]) {
 
   XFlush(disp);
 
-#endif
+#endif // ANIMATE
 
   clock_t start = clock();
   for(int i = 0; i < iter; i++)
@@ -261,7 +268,7 @@ int main(int argc, char* argv[]) {
       XClearWindow(disp,window);	
       
       
-#endif
+#endif // ANIMATE
     }
   clock_t stop = clock();
   float diff = (float)(stop - start)/CLOCKS_PER_SEC;
@@ -273,7 +280,7 @@ int main(int argc, char* argv[]) {
   XCloseDisplay(disp);
   free(gc);
   free(points);  
-#endif
+#endif // ANIMATE
 
   free(stars);
 
@@ -281,6 +288,6 @@ int main(int argc, char* argv[]) {
 
   return 0;
 }
-#endif
+#endif // UNITTEST
 
-
+*/

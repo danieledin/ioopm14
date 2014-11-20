@@ -1,121 +1,11 @@
-#include "starsim.h"
-#include <CUnit/CUnit.h>
-#define TEST
-
-
-
-#include "CUnit/Basic.h"
-
-
-#include <math.h>
 #include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
-#include <string.h>
-#include <unistd.h>
+#include <CUnit/Basic.h>
+#include "starsim.h"
 
 
 
-#define prec float
-#define PI 3.14159265359
-
-static float G = 0.8;
-
-static prec gdt = 0.002;
-
-
-
-typedef struct body {
-float position_x;
-float position_y;
-  float  mass;
-  float velocity_x;
-  float velocity_y;
-  float acceleration_x;
-  float acceleration_y;
-  float force_x;
-  float force_y;
-} body;
-
-
-static void setAcceleration (struct body *star)
-{
-  star->acceleration_x = (star->force_x) / (star->mass);
-  // star[0].acceleration_y = (star[0].force_y) / (star[0].mass);
-}
-
-
-static void setVelocity (struct body *star)
-{
-  star->velocity_x = (star->velocity_x) + ((star->acceleration_x) * gdt);
-  star->velocity_y = (star->velocity_y) + ((star->acceleration_y) * gdt);
-
-}
-
-static void setPosition (struct body *star)
-{
-  star->position_x = (star->position_x) + ((star->velocity_x) * gdt) + (0.5*((star->acceleration_x) * gdt * gdt));
-  star->position_y = (star->position_y) + ((star->velocity_y) * gdt) + (0.5*((star->acceleration_y) * gdt * gdt));
-
-} 
-
-
-static float distance(struct body *a, struct body *b) {
-  float x = (a->position_x - b->position_x) * (a->position_x - b->position_x);
-  float y = (a->position_y - b->position_y) * (a->position_y - b->position_y);
-
-  float distance = sqrt (x+y);  // float sqrt!
-
-  return distance;
-}
- 
-
-static void addForce(body *a, body *b)
-{
-  float force_x;
-  float force_y;
-  float distance_x = (b->position_x - a->position_x);
-  float distance_y = (b->position_y - a->position_y);
-  float distance_r = (distance(a, b));
-  if (distance_y != 0)
-    {
-      force_y = ((a->mass * b->mass) / (distance_r * distance_r)) * G * distance_y;
-      a->force_y += force_y;
-      b->force_y -= force_y;
-    }
-
-  if ( distance_x != 0)
-    {
-      force_x = ((a->mass * b->mass) / (distance_r * distance_r)) * G * distance_x;
-     
-      a->force_x += force_x;
-      b->force_x -= force_x;
-    }
-}
-
-
-
-static void updateForces(int numberOfStars, body* star)
-{
-  for (int i = 0; i < numberOfStars-1; i++)
-    {
-      for (int j = i+1; j <= numberOfStars-1; j++)
-	{ 
-	  addForce(&star[i], &star[j]);
-	}   
-      setAcceleration(&star[i]);
-      setVelocity(&star[i]);
-      setPosition(&star[i]);
-    }
-}
-
-
-
-
-
-
-struct body * makeTestStar(){
-  struct  body *testStar = malloc (sizeof(struct body));
+Star*  makeTestStar(){
+  Star* testStar = malloc(sizeof(struct Body));
 
   testStar->force_y = 4.0;
   testStar->force_x = 5.0;
@@ -128,8 +18,8 @@ struct body * makeTestStar(){
 }
 
 
-struct body * makeTestStar2(){
-  struct  body *testStar = malloc (sizeof(struct body));
+Star* makeTestStar2(){
+  Star* testStar = malloc (sizeof(struct Body));
 
   testStar->force_x = 2.0;
   testStar->force_y = 3.0;
@@ -144,8 +34,8 @@ struct body * makeTestStar2(){
 
 void testAddForce(void){
 
-  struct body* a = makeTestStar();
-  struct body* b = makeTestStar2();
+  struct Body* a = makeTestStar();
+  Star*  b = makeTestStar2();
 
   addForce(a,b);
 
@@ -187,7 +77,7 @@ void testAddForce(void){
 
 void testSetAcceleration(void) {
 
-  struct body* testStar = makeTestStar();
+  Star*  testStar = makeTestStar();
 
   setAcceleration(testStar);
 
@@ -210,7 +100,7 @@ void testSetAcceleration(void) {
 }
 
 void testSetVelocity(void){
-  struct body* testStar = makeTestStar();
+  Star*  testStar = makeTestStar();
   setVelocity(testStar);
   CU_ASSERT(fabs(testStar->velocity_x - 1.005000) < 0.0001);
   CU_ASSERT(fabs(testStar->velocity_y - 2.000000) < 0.0001);
@@ -224,14 +114,14 @@ void testSetVelocity(void){
   }
   */
   /*
-    printf("test Velocity: %f \n", testStar->velocity_x);
+    printf("test Velocity:nclude <CUnit/Basic.h> %f \n", testStar->velocity_x);
     printf("test Velocty: %f \n", testStar->velocity_y);
   */
   free (testStar);
 }
 
 void testSetPosition(void){
-  struct body* testStar = makeTestStar();
+  Star*  testStar = makeTestStar();
   setPosition(testStar);
   CU_ASSERT(fabs(testStar->position_x - 400.002014) < 0.0001);
   CU_ASSERT(fabs(testStar->position_y - 400.003998) < 0.0001);
@@ -252,15 +142,14 @@ void testSetPosition(void){
 
 void testUpdateForces(void){
 
-  struct body* test_a = makeTestStar();
-  struct body* test_b = makeTestStar2();
+  Star*  test_a = makeTestStar();
+  Star*  test_b = makeTestStar2();
 
 
-  struct body* stars = malloc (4 * sizeof(struct body*));
+	// Star* stars[2];
+  Star*  stars = malloc (4 * sizeof(struct Body*));
   stars[0] = *test_a;
   stars[1] = *test_b;
-
-
 
   updateForces(3, stars);
 

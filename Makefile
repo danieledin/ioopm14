@@ -10,6 +10,12 @@ animate:
 run: animate
 	./starsim 
 
+
+
+test: testCases.c
+	gcc -ggdb -Wall -std=c99 -DUNITTEST testCases.c -o test -lm -lcunit 
+	./test	
+
 clean:
 	rm starsim
 

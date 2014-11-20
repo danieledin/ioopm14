@@ -14,6 +14,8 @@
 #include <string.h>
 #include <unistd.h>
 
+
+
 #define prec float
 #define PI 3.14159265359
 
@@ -41,6 +43,7 @@ static void setAcceleration (struct body *star)
   star->acceleration_x = (star->force_x) / (star->mass);
   // star[0].acceleration_y = (star[0].force_y) / (star[0].mass);
 }
+
 
 static void setVelocity (struct body *star)
 {
@@ -138,17 +141,19 @@ struct body * makeTestStar2(){
   return testStar;
 }
 
+
 void testAddForce(void){
 
   struct body* a = makeTestStar();
   struct body* b = makeTestStar2();
 
+  addForce(a,b);
 
 
-  CU_ASSERT(fabs(a->force_x - 5.000000) < 0.0001);
-  CU_ASSERT(fabs(a->force_y - 4.000000) < 0.0001);
-  CU_ASSERT(fabs(b->force_x - 2.000000) < 0.0001);
-  CU_ASSERT(fabs(b->force_y - 3.000000) < 0.0001);
+  CU_ASSERT(fabs(a->force_x - 4.9920000) < 0.0001);
+  CU_ASSERT(fabs(a->force_y - 3.9920000) < 0.0001);
+  CU_ASSERT(fabs(b->force_x - 2.008000) < 0.0001);
+  CU_ASSERT(fabs(b->force_y - 3.008000) < 0.0001);
 
   /*
   if (fabs(a->force_x + 0.008000) < 0.0001){
@@ -176,6 +181,7 @@ void testAddForce(void){
   */
   free(a);
   free(b);
+
 }
 
 
@@ -248,34 +254,31 @@ void testUpdateForces(void){
 
   struct body* test_a = makeTestStar();
   struct body* test_b = makeTestStar2();
-  struct body* test_c = makeTestStar2();
-  struct body* test_d = makeTestStar2();
-  test_c->position_x = 50;
-  test_c->position_y = 50;
 
-  test_d->position_x = 700;
-  test_d->position_y = 700;
 
   struct body* stars = malloc (4 * sizeof(struct body*));
   stars[0] = *test_a;
   stars[1] = *test_b;
-  stars[2] = *test_c;
-  stars[3] = *test_d;
-   updateForces(100, stars);
 
-  //CU_ASSERT_EQUAL(stars[0].position_x, stars[0].position_x)
-  //CU_ASSERT_EQUAL(stars[0].position_y, stars[0].position_y)
 
-  
-  printf("\n\ntest position_X UpdateForces: %f \n", stars[0].position_x);
-  printf("test position_Y UpdateForces: %f \n", stars[0].position_y);
-  
+
+  updateForces(3, stars);
+
+  CU_ASSERT(fabs(stars[0].position_x - 400.002014) < 0.0001);
+  CU_ASSERT(fabs(stars[0].position_y - 400.003998) < 0.0001);
+  CU_ASSERT(fabs(stars[1].position_x - 200.001999) < 0.0001);
+  CU_ASSERT(fabs(stars[1].position_y - 200.005997) < 0.0001);
+
   /*
-    free(test_a);
-  free(test_b);
-  free(test_c);
-  free(test_d);
+  printf("\n\ntest position_0X UpdateForces: %f \n", stars[0].position_x);
+  printf("test position_0Y UpdateForces: %f \n", stars[0].position_y);
+  printf("test position_1X UpdateForces: %f \n", stars[1].position_x);
+  printf("test position_1Y UpdateForces: %f \n", stars[1].position_y);
   */
+
+  free(test_a);
+  free(test_b);
+
 }
 
 

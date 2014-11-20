@@ -1,6 +1,6 @@
 #include "starsim.h"
 #include <CUnit/CUnit.h>
-
+#define TEST
 
 
 
@@ -13,6 +13,14 @@
 #include <time.h>
 #include <string.h>
 #include <unistd.h>
+
+#define prec float
+#define PI 3.14159265359
+
+static float G = 0.8;
+
+static prec gdt = 0.002;
+
 
 
 typedef struct body {
@@ -28,40 +36,119 @@ float position_y;
 } body;
 
 
+static void setAcceleration (struct body *star)
+{
+  star->acceleration_x = (star->force_x) / (star->mass);
+  // star[0].acceleration_y = (star[0].force_y) / (star[0].mass);
+}
 
-static struct body * makeTestStar(){
+static void setVelocity (struct body *star)
+{
+  star->velocity_x = (star->velocity_x) + ((star->acceleration_x) * gdt);
+  star->velocity_y = (star->velocity_y) + ((star->acceleration_y) * gdt);
+
+}
+
+static void setPosition (struct body *star)
+{
+  star->position_x = (star->position_x) + ((star->velocity_x) * gdt) + (0.5*((star->acceleration_x) * gdt * gdt));
+  star->position_y = (star->position_y) + ((star->velocity_y) * gdt) + (0.5*((star->acceleration_y) * gdt * gdt));
+
+} 
+
+
+static float distance(struct body *a, struct body *b) {
+  float x = (a->position_x - b->position_x) * (a->position_x - b->position_x);
+  float y = (a->position_y - b->position_y) * (a->position_y - b->position_y);
+
+  float distance = sqrt (x+y);  // float sqrt!
+
+  return distance;
+}
+ 
+
+static void addForce(body *a, body *b)
+{
+  float force_x;
+  float force_y;
+  float distance_x = (b->position_x - a->position_x);
+  float distance_y = (b->position_y - a->position_y);
+  float distance_r = (distance(a, b));
+  if (distance_y != 0)
+    {
+      force_y = ((a->mass * b->mass) / (distance_r * distance_r)) * G * distance_y;
+      a->force_y += force_y;
+      b->force_y -= force_y;
+    }
+
+  if ( distance_x != 0)
+    {
+      force_x = ((a->mass * b->mass) / (distance_r * distance_r)) * G * distance_x;
+     
+      a->force_x += force_x;
+      b->force_x -= force_x;
+    }
+}
+
+
+
+static void updateForces(int numberOfStars, body* star)
+{
+  for (int i = 0; i < numberOfStars-1; i++)
+    {
+      for (int j = i+1; j <= numberOfStars-1; j++)
+	{ 
+	  addForce(&star[i], &star[j]);
+	}   
+      setAcceleration(&star[i]);
+      setVelocity(&star[i]);
+      setPosition(&star[i]);
+    }
+}
+
+
+
+
+
+
+struct body * makeTestStar(){
   struct  body *testStar = malloc (sizeof(struct body));
 
-  testStar->force_y = 0.0;
-  testStar->force_x = 0.0;
+  testStar->force_y = 4.0;
+  testStar->force_x = 5.0;
   testStar->position_x = 400.0;
   testStar->position_y = 400.0;
   testStar->mass = 2.0;
   testStar->velocity_x = 1.0;
-  testStar->velocity_y = -1.0;
+  testStar->velocity_y = 2.0;
   return testStar;
 }
 
 
-static struct body * makeTestStar2(){
+struct body * makeTestStar2(){
   struct  body *testStar = malloc (sizeof(struct body));
 
-  testStar->force_x = 0.0;
-  testStar->force_y = 0.0;
+  testStar->force_x = 2.0;
+  testStar->force_y = 3.0;
   testStar->position_x = 200.0;
   testStar->position_y = 200.0;
   testStar->mass = 2.0;
   testStar->velocity_x = 1.0;
-  testStar->velocity_y = -1.0;
+  testStar->velocity_y = 3.0;
   return testStar;
 }
 
-static void testAddForce(body *a, body *b){
+void testAddForce(void){
 
-  CU_ASSERT(fabs(a->force_x + 0.008000) < 0.0001);
-  CU_ASSERT(fabs(a->force_y + 0.008000) < 0.0001);
-  CU_ASSERT(fabs(b->force_x - 0.008000) < 0.0001);
-  CU_ASSERT(fabs(b->force_y - 0.008000) < 0.0001);
+  struct body* a = makeTestStar();
+  struct body* b = makeTestStar2();
+
+
+
+  CU_ASSERT(fabs(a->force_x - 5.000000) < 0.0001);
+  CU_ASSERT(fabs(a->force_y - 4.000000) < 0.0001);
+  CU_ASSERT(fabs(b->force_x - 2.000000) < 0.0001);
+  CU_ASSERT(fabs(b->force_y - 3.000000) < 0.0001);
 
   /*
   if (fabs(a->force_x + 0.008000) < 0.0001){
@@ -77,7 +164,7 @@ static void testAddForce(body *a, body *b){
     printf("B force_x correct\n");
   }
 
-  if (fabs(b->force_y - 0.008000) < 0.0001){
+  if (fabs(b->force_y e 0.008000) < 0.0001){
     printf("B force_y correct\n");
   }
   */
@@ -87,15 +174,19 @@ static void testAddForce(body *a, body *b){
     printf("bx test force: %f \n", b->force_x);
     printf("by test force: %f \n", b->force_y);
   */
-
+  free(a);
+  free(b);
 }
 
 
-static void testSetAcceleration(struct body* testStar) {
+void testSetAcceleration(void) {
+
+  struct body* testStar = makeTestStar();
+
   setAcceleration(testStar);
 
-  CU_ASSERT(fabs(testStar->acceleration_x + 0.004000) < 0.0001);
-  CU_ASSERT(fabs(testStar->acceleration_x + 0.004000) < 0.0001);
+  CU_ASSERT(fabs(testStar->acceleration_x - 2.500000) < 0.0001);
+  //  CU_ASSERT(fabs(testStar->acceleration_x - 0.000000) < 0.0001);
   /*
   if (fabs(testStar->acceleration_x + 0.004000) < 0.0001){
     printf("acceleration_x correct\n");
@@ -109,12 +200,14 @@ static void testSetAcceleration(struct body* testStar) {
     printf("test Acceleration: %f \n", testStar->acceleration_x);
     printf("test Acceleration: %f \n", testStar->acceleration_y);
   */
+  free(testStar);
 }
 
-static void testSetVelocity(struct body* testStar){
+void testSetVelocity(void){
+  struct body* testStar = makeTestStar();
   setVelocity(testStar);
-  CU_ASSERT(fabs(testStar->velocity_x - 0.999992) < 0.0001);
-  CU_ASSERT(fabs(testStar->velocity_y + 1.000008) < 0.0001);
+  CU_ASSERT(fabs(testStar->velocity_x - 1.005000) < 0.0001);
+  CU_ASSERT(fabs(testStar->velocity_y - 2.000000) < 0.0001);
   /*
   if (fabs(testStar->velocity_x - 0.999992) < 0.0001){
     printf("velocity_x correct\n");
@@ -128,12 +221,14 @@ static void testSetVelocity(struct body* testStar){
     printf("test Velocity: %f \n", testStar->velocity_x);
     printf("test Velocty: %f \n", testStar->velocity_y);
   */
+  free (testStar);
 }
 
-static void testSetPosition(struct body* testStar){
+void testSetPosition(void){
+  struct body* testStar = makeTestStar();
   setPosition(testStar);
   CU_ASSERT(fabs(testStar->position_x - 400.002014) < 0.0001);
-  CU_ASSERT(fabs(testStar->position_y - 399.997986) < 0.0001);
+  CU_ASSERT(fabs(testStar->position_y - 400.003998) < 0.0001);
   /*
   if (fabs(testStar->position_x - 400.002014) < 0.0001){
     printf("position_x correct\n");
@@ -145,10 +240,11 @@ static void testSetPosition(struct body* testStar){
 
   printf("test position_X: %f \n", testStar->position_x);
   printf("test position_Y: %f \n", testStar->position_y);
-  */
+  */  
+  free(testStar);
 }
 
-static void testUpdateForces(){
+void testUpdateForces(void){
 
   struct body* test_a = makeTestStar();
   struct body* test_b = makeTestStar2();
@@ -165,24 +261,34 @@ static void testUpdateForces(){
   stars[1] = *test_b;
   stars[2] = *test_c;
   stars[3] = *test_d;
-  updateForces(100, stars);
+   updateForces(100, stars);
 
-  CU_ASSERT_EQUAL(stars[0].position_x, stars[0].position_x)
-  CU_ASSERT_EQUAL(stars[0].position_y, stars[0].position_y)
-    /*
-  printf("test position_X UpdateForces: %f \n", stars[0].position_x);
+  //CU_ASSERT_EQUAL(stars[0].position_x, stars[0].position_x)
+  //CU_ASSERT_EQUAL(stars[0].position_y, stars[0].position_y)
+
+  
+  printf("\n\ntest position_X UpdateForces: %f \n", stars[0].position_x);
   printf("test position_Y UpdateForces: %f \n", stars[0].position_y);
-    */
-
+  
+  /*
+    free(test_a);
+  free(test_b);
+  free(test_c);
+  free(test_d);
+  */
 }
+
+
 
 
 
 
 int init_suite_1(void)
 {
-
+ 
   return 0;
+ 
+
 }
 
 int clean_suite_1(void)
@@ -195,18 +301,8 @@ int main()
 {
   
 
-  struct body* testStar_a = makeTestStar();
-  struct body* testStar_b = makeTestStar2();
-
-  testAddForce(testStar_a, testStar_b);
-  testSetAcceleration(testStar_a);
-  testSetVelocity(testStar_a);
-  testSetPosition(testStar_a);
-
-
 
   CU_pSuite pSuite1 = NULL;
-  CU_pSuite pSuite2 = NULL;
 
   /* initialize the CUnit test registry */
   if (CUE_SUCCESS != CU_initialize_registry())
@@ -219,21 +315,23 @@ int main()
       CU_cleanup_registry();
       return CU_get_error();
     }
+  /*
   pSuite2 = CU_add_suite("Advanced Functions Suite", init_suite_2, clean_suite_2);
   if (NULL == pSuite2)
     {
       CU_cleanup_registry();
       return CU_get_error();
     }
-testUpdateForces();  
+  */
+
   /* add the tests to the suites */
   if (
-      (NULL == CU_add_test(pSuite1, "test of addForce()", testAddForce(testStar_a, testStar_b))) ||
-      (NULL == CU_add_test(pSuite1, "test of setAcceleration()", testSetAcceleration(testStar_a))) ||
-      (NULL == CU_add_test(pSuite1, "test of setVelocity()", testSetVelocity(testStar_a))) ||
-      (NULL == CU_add_test(pSuite1, "test of setPosition()", setPosition(testStar_a))) ||
-      (NULL == CU_add_test(pSuite1, "test of updateForces()", updateForces()))
-
+      (NULL == CU_add_test(pSuite1, "test of addForce()", testAddForce)) ||
+      (NULL == CU_add_test(pSuite1, "test of setAcceleration()", testSetAcceleration)) ||
+      (NULL == CU_add_test(pSuite1, "test of setVelocity()", testSetVelocity))  ||
+      (NULL == CU_add_test(pSuite1, "test of setPosition()", testSetPosition)) ||
+      (NULL == CU_add_test(pSuite1, "test of updateForces()", testUpdateForces))
+									      
   )
     {
       CU_cleanup_registry();

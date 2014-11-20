@@ -18,7 +18,7 @@
 #include <unistd.h>
 
 #ifdef ANIMATE
-#include <X11/Xlib.h>+ 
+#include <X11/Xlib.h> 
 #include <X11/Xutil.h>
 
 #define X_SIZE 800
@@ -175,9 +175,9 @@ static void copyToXBuffer(body* star, XPoint* points, int N)
 
 
 
-}
-*/
-#ifndef TEST
+
+
+#ifndef UNITTEST
 int main(int argc, char* argv[]) {
   
 
@@ -214,7 +214,7 @@ int main(int argc, char* argv[]) {
 
 
   struct body *stars = createBodies(N);
- 
+
 
 #ifdef ANIMATE
   XPoint* points = malloc(sizeof(XPoint)*N);
@@ -246,13 +246,13 @@ int main(int argc, char* argv[]) {
   XFlush(disp);
 
 #endif
- 
+
   clock_t start = clock();
   for(int i = 0; i < iter; i++)
     {
       resetForce(stars, N);
       updateForces(N, &stars[0]);
-      
+
 #ifdef ANIMATE
       copyToXBuffer(&stars[0], points, N);
       
@@ -274,6 +274,7 @@ int main(int argc, char* argv[]) {
   free(gc);
   free(points);  
 #endif
+
   free(stars);
 
 
@@ -281,4 +282,5 @@ int main(int argc, char* argv[]) {
   return 0;
 }
 #endif
+
 

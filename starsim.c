@@ -14,7 +14,7 @@
 #include <string.h>
 #include <unistd.h>
 
-
+/*
 struct Body {
   float position_x;
   float position_y;
@@ -26,7 +26,7 @@ struct Body {
   float force_x;
   float force_y;
 };
-
+*/
 
 
 #ifdef ANIMATE
@@ -182,7 +182,7 @@ Star* createBodies (int numberOfStars)
 
 
 
-/*
+
 
 #ifndef UNITTEST
 int main(int argc, char* argv[]) {
@@ -195,7 +195,7 @@ int main(int argc, char* argv[]) {
 
   while (i<100) {
     int rand = newRand();  
-    printf("%d\n", rand);
+    //printf("%d\n", rand);
     i++;
   }
 
@@ -290,4 +290,5 @@ int main(int argc, char* argv[]) {
 }
 #endif // UNITTEST
 
-*/
+
+

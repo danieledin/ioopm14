@@ -2,7 +2,7 @@
 #include <CUnit/Basic.h>
 #include "starsim.h"
 
-
+#define UNITTEST
 
 Star*  makeTestStar(){
   Star* testStar = malloc(sizeof(struct Body));
@@ -32,6 +32,39 @@ Star* makeTestStar2(){
 }
 
 
+
+Star* createBodiesTest (int numberOfStars)
+{
+
+  //time_t t;
+  //srand((unsigned) time(&t));
+
+  int i;
+  Star* stars = malloc (numberOfStars * sizeof(struct Body ));
+  if (stars == NULL)
+    {
+      printf("   Malloc fail. \n   Not enough memory for Star allocation \n");
+      exit(0);
+    }
+
+  memset(stars, 0, numberOfStars*sizeof(struct Body));
+  for (i = 0; i < numberOfStars-1; i++)
+    {
+      float ang = 300 + i*10;
+      stars[i].position_x = (cos(ang) * 300) + 400;
+      stars[i].position_y = (sin(ang) * 300) + 400;
+      stars[i].mass = i*2 + 1;
+      stars[i].velocity_x = (400 - stars[i].position_y) * 0.05;
+      stars[i].velocity_y = -(400 - stars[i].position_x) * 0.05;
+      
+    }
+
+
+  return stars; 
+
+}
+
+
 void testAddForce(void){
 
   struct Body* a = makeTestStar();
@@ -45,30 +78,6 @@ void testAddForce(void){
   CU_ASSERT(fabs(b->force_x - 2.008000) < 0.0001);
   CU_ASSERT(fabs(b->force_y - 3.008000) < 0.0001);
 
-  /*
-  if (fabs(a->force_x + 0.008000) < 0.0001){
-    printf("A force_x correct\n");
-  }
-
-  if (fabs(a->force_y + 0.008000) < 0.0001){
-    printf("A force_y correct\n");
-  }
-
-
-  if (fabs(b->force_x - 0.008000) < 0.0001){
-    printf("B force_x correct\n");
-  }
-
-  if (fabs(b->force_y e 0.008000) < 0.0001){
-    printf("B force_y correct\n");
-  }
-  */
-  /*
-    printf("ax test force: %f \n", a->force_x);
-    printf("ay test force: %f \n", a->force_y);
-    printf("bx test force: %f \n", b->force_x);
-    printf("by test force: %f \n", b->force_y);
-  */
   free(a);
   free(b);
 
@@ -82,20 +91,7 @@ void testSetAcceleration(void) {
   setAcceleration(testStar);
 
   CU_ASSERT(fabs(testStar->acceleration_x - 2.500000) < 0.0001);
-  //  CU_ASSERT(fabs(testStar->acceleration_x - 0.000000) < 0.0001);
-  /*
-  if (fabs(testStar->acceleration_x + 0.004000) < 0.0001){
-    printf("acceleration_x correct\n");
-  }
-
-  if (fabs(testStar->acceleration_y + 0.004000) < 0.0001){
-    printf("acceleration_y correct\n");
-  }
-  */
-  /*
-    printf("test Acceleration: %f \n", testStar->acceleration_x);
-    printf("test Acceleration: %f \n", testStar->acceleration_y);
-  */
+  
   free(testStar);
 }
 
@@ -103,20 +99,8 @@ void testSetVelocity(void){
   Star*  testStar = makeTestStar();
   setVelocity(testStar);
   CU_ASSERT(fabs(testStar->velocity_x - 1.005000) < 0.0001);
-  CU_ASSERT(fabs(testStar->velocity_y - 2.000000) < 0.0001);
-  /*
-  if (fabs(testStar->velocity_x - 0.999992) < 0.0001){
-    printf("velocity_x correct\n");
-  }
-
-  if (fabs(testStar->velocity_y + 1.000008) < 0.0001){
-    printf("velocity_y correct\n");
-  }
-  */
-  /*
-    printf("test Velocity:nclude <CUnit/Basic.h> %f \n", testStar->velocity_x);
-    printf("test Velocty: %f \n", testStar->velocity_y);
-  */
+  CU_ASSERT(fabs(testStar->velocity_y - 2.004000) < 0.0001);
+  
   free (testStar);
 }
 
@@ -125,48 +109,24 @@ void testSetPosition(void){
   setPosition(testStar);
   CU_ASSERT(fabs(testStar->position_x - 400.002014) < 0.0001);
   CU_ASSERT(fabs(testStar->position_y - 400.003998) < 0.0001);
-  /*
-  if (fabs(testStar->position_x - 400.002014) < 0.0001){
-    printf("position_x correct\n");
-  }
-
-  if (fabs(testStar->position_y - 399.997986) < 0.0001){
-    printf("position_y correct\n");
-  }
-
-  printf("test position_X: %f \n", testStar->position_x);
-  printf("test position_Y: %f \n", testStar->position_y);
-  */  
   free(testStar);
 }
 
 void testUpdateForces(void){
 
-  Star*  test_a = makeTestStar();
-  Star*  test_b = makeTestStar2();
 
+  Star* stars = malloc (3 * sizeof(struct Body*));
+  stars = createBodiesTest(3);
 
-	// Star* stars[2];
-  Star*  stars = malloc (4 * sizeof(struct Body*));
-  stars[0] = *test_a;
-  stars[1] = *test_b;
-
+  
   updateForces(3, stars);
-
-  CU_ASSERT(fabs(stars[0].position_x - 400.002014) < 0.0001);
-  CU_ASSERT(fabs(stars[0].position_y - 400.003998) < 0.0001);
-  CU_ASSERT(fabs(stars[1].position_x - 200.001999) < 0.0001);
-  CU_ASSERT(fabs(stars[1].position_y - 200.005997) < 0.0001);
-
-  /*
-  printf("\n\ntest position_0X UpdateForces: %f \n", stars[0].position_x);
-  printf("test position_0Y UpdateForces: %f \n", stars[0].position_y);
-  printf("test position_1X UpdateForces: %f \n", stars[1].position_x);
-  printf("test position_1Y UpdateForces: %f \n", stars[1].position_y);
-  */
-
-  free(test_a);
-  free(test_b);
+  
+  CU_ASSERT(fabs(stars[0].position_x - 393.401001) < 0.0001);
+  CU_ASSERT(fabs(stars[0].position_y - 100.072586) < 0.0001);
+  CU_ASSERT(fabs(stars[1].position_x - 242.370178) < 0.0001);
+  CU_ASSERT(fabs(stars[1].position_y - 655.250549) < 0.0001);
+  
+  free(stars);
 
 }
 
@@ -207,14 +167,6 @@ int main()
       CU_cleanup_registry();
       return CU_get_error();
     }
-  /*
-  pSuite2 = CU_add_suite("Advanced Functions Suite", init_suite_2, clean_suite_2);
-  if (NULL == pSuite2)
-    {
-      CU_cleanup_registry();
-      return CU_get_error();
-    }
-  */
 
   /* add the tests to the suites */
   if (

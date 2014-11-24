@@ -13,7 +13,7 @@
  * 
  * 
  */
-/*
+
 struct Body {
   float position_x;
   float position_y;
@@ -25,7 +25,7 @@ struct Body {
   float force_x;
   float force_y;
 };
-*/
+
 typedef struct Body Star;
 
 
